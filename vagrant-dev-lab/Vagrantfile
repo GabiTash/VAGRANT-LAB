@@ -1,23 +1,36 @@
 Vagrant.configure("2") do |config|
-  # הגדרת האימג' - CentOS 7 נחשב לקל ויציב מאוד למעבדות
   config.vm.box = "centos/7"
 
-  # לולאה ליצירת 4 שרתים: srv1, srv2, srv3, srv4
   (1..4).each do |i|
     config.vm.define "srv#{i}" do |node|
       
-      # הגדרת כתובת IP פרטית לכל שרת (לצורך תקשורת ביניהם)
       node.vm.network "private_network", ip: "192.168.56.1#{i}"
-      
-      # הגדרת שם המארח (Hostname) בתוך הלינוקס
       node.vm.hostname = "srv#{i}"
 
-      # הגדרות משאבים ב-VirtualBox
       node.vm.provider "virtualbox" do |vb|
-        vb.memory = "512"  # חצי ג'יגה ראם לכל שרת
-        vb.cpus = 1        # ליבה אחת לכל שרת
-        vb.name = "CentOS-Srv#{i}" # השם שיופיע בממשק של VirtualBox
+        vb.memory = "512"
+        vb.cpus = 1
+        vb.name = "CentOS-Srv#{i}"
       end
+
+      # --- התקנת כלי עזר ומערכת (Provisioning) ---
+      node.vm.provision "shell", inline: <<-SHELL
+        echo "Updating and installing tools for srv#{i}..."
+        
+        # עדכון המערכת
+        sudo yum update -y
+        
+        # התקנת כלים שימושיים:
+        # net-tools: בשביל פקודות כמו ifconfig ו-netstat
+        # vim: עורך טקסט מתקדם (הרבה יותר טוב מ-vi)
+        # wget & curl: להורדת קבצים מהאינטרנט דרך הטרמינל
+        # telnet & bind-utils: לבדיקת תקשורת ו-DNS (פקודות כמו nslookup ו-dig)
+        # htop: לניטור עומס על המעבד והזיכרון בצורה ויזואלית
+        
+        sudo yum install -y net-tools vim wget curl bind-utils bash-completion htop
+        
+        echo "All tools installed on srv#{i}!"
+      SHELL
     end
   end
 end
