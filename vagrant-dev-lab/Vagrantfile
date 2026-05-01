@@ -1,35 +1,25 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "centos/7"
+  # הגדרת ה-Box המשותף לכולן
+  config.vm.box = "generic/centos9s"
 
+  # יצירת 3 מכונות בלולאה
   (1..4).each do |i|
     config.vm.define "srv#{i}" do |node|
       
-      node.vm.network "private_network", ip: "192.168.56.1#{i}"
-      node.vm.hostname = "srv#{i}"
-
+      # הגדרת שם המכונה וכתובת ה-IP (192.168.56.11, .12, .13)
+      node.vm.network "private_network", ip: "192.168.56.#{10 + i}"
+      
+      # הגדרת משאבי מערכת לכל מכונה
       node.vm.provider "virtualbox" do |vb|
-        vb.memory = "512"
+        vb.name = "srv#{i}"
+        vb.memory = "1024"
         vb.cpus = 1
-        vb.name = "CentOS-Srv#{i}"
       end
 
-      # --- התקנת כלי עזר ומערכת (Provisioning) ---
+      # Provisioning: עדכון המערכת רק בהרצה הראשונה
       node.vm.provision "shell", inline: <<-SHELL
-        echo "Updating and installing tools for srv#{i}..."
-        
-        # עדכון המערכת
-        sudo yum update -y
-        
-        # התקנת כלים שימושיים:
-        # net-tools: בשביל פקודות כמו ifconfig ו-netstat
-        # vim: עורך טקסט מתקדם (הרבה יותר טוב מ-vi)
-        # wget & curl: להורדת קבצים מהאינטרנט דרך הטרמינל
-        # telnet & bind-utils: לבדיקת תקשורת ו-DNS (פקודות כמו nslookup ו-dig)
-        # htop: לניטור עומס על המעבד והזיכרון בצורה ויזואלית
-        
-        sudo yum install -y net-tools vim wget curl bind-utils bash-completion htop
-        
-        echo "All tools installed on srv#{i}!"
+        echo "Updating srv#{i} system..."
+        sudo dnf update -y
       SHELL
     end
   end
