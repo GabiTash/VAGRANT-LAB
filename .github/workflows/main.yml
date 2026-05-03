@@ -2,12 +2,15 @@ name: Vagrant Lab CI-CD
 
 on:
   push:
+    branches:
+      - master  # ה-Pipeline יופעל רק כשמתבצע Push לענף master
     paths:
-      - 'Vagrantfile' # ה-Pipeline ירוץ רק כשתשנה את הקובץ הזה
+      - 'Vagrantfile' # ה-Pipeline ירוץ רק כשיש שינוי בקובץ הזה
 
 jobs:
   vagrant-deploy:
-    runs-on: [self-hosted, Windows, X64] # התגיות שראינו ב-Runner שלך
+    # שימוש ב-Labels המדויקים מה-Runner שלך (image_ef9702.png)
+    runs-on: [self-hosted, Windows, X64]
 
     steps:
       - name: Checkout Code
@@ -15,4 +18,5 @@ jobs:
 
       - name: Deploy Vagrant Lab
         run: |
+          # הרצת הפקודה באמצעות ה-Runner שרץ תחת המשתמש gabi
           vagrant up --provision
