@@ -1,7 +1,7 @@
 Vagrant.configure("2") do |config|
   # הגדרת ה-Box המשותף לכולן
   config.vm.box = "generic/centos9s"
-   # trigger run 1
+  
   # יצירת 3 מכונות בלולאה
   (1..5).each do |i|
     config.vm.define "srv#{i}" do |node|
