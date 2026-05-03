@@ -5,8 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'Vagrantfile'
-  workflow_dispatch: # שומר על האפשרות להפעיל ידנית מהאתר
+      - 'vagrant-dev-lab/Vagrantfile' # עדכון הנתיב גם כאן ליתר ביטחון
+  workflow_dispatch:
 
 jobs:
   vagrant-deploy:
@@ -17,9 +17,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy Vagrant Lab
-        # המשתנה הזה מבטיח שה-Runner ירוץ בדיוק בתיקייה שבה נמצא ה-Vagrantfile
-        working-directory: ${{ github.workspace }}
+        # כאן אנחנו נכנסים לתיקייה שראינו ב-dir
+        working-directory: ${{ github.workspace }}/vagrant-dev-lab
         run: |
-          echo "Verifying location:"
+          echo "Current location content:"
           dir
           vagrant up --provision
