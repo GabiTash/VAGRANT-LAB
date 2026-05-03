@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy Vagrant Lab
+        working-directory: ${{ github.workspace }}
         run: |
           # הרצת הפקודה
           vagrant up --provision
