@@ -1,0 +1,18 @@
+name: Vagrant Lab CI-CD
+
+on:
+  push:
+    paths:
+      - 'Vagrantfile' # ה-Pipeline ירוץ רק כשתשנה את הקובץ הזה
+
+jobs:
+  vagrant-deploy:
+    runs-on: [self-hosted, Windows, X64] # התגיות שראינו ב-Runner שלך
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4 # מושך את הקבצים למחשב
+
+      - name: Deploy Vagrant Lab
+        run: |
+          vagrant up --provision
